@@ -3,6 +3,17 @@
 #include <yajl/yajl_gen.h>
 #include <yaml.h>
 
+static char *gen_status_str[] = {
+	"no error",
+	"at a point where a map key is generated, a function other than yajl_gen_string was called",
+	"YAJL's maximum generation depth was exceeded",
+	"a generator function (yajl_gen_XXX) was called while in an error state",
+	"a complete JSON document has been generated",
+	"yajl_gen_double was passed an invalid floating point value (infinity or NaN)",
+	"a print callback was passed in, so there is no internal buffer to get from",
+	"returned from yajl_gen_string() when the yajl_gen_validate_utf8 option is enabled and an invalid was passed by client code",
+};
+
 static void
 print_cb(void *ctx, const char *str, size_t len)
 {
@@ -22,7 +33,7 @@ is_num(char *s, size_t len)
 	if (s[i] == '-')
 		if (++i >= len)
 			return 0;
-	
+
 	/* number */
 	if (s[i] == '0') {
 		if (++i >= len)
@@ -35,7 +46,7 @@ is_num(char *s, size_t len)
 				return 1;
 	} else
 		return 0;
-	
+
 	/* fraction */
 	if (s[i] == '.') {
 		if (++i >= len)
@@ -92,7 +103,7 @@ main(int argc, char **argv)
 	yajl_gen gen;
 	yajl_gen_status status;
 	int ok;
-	
+
 	if (argc < 2)
 		file = stdin;
 	else if (argc > 2 || argv[1][0] == '-') {
@@ -176,7 +187,7 @@ main(int argc, char **argv)
 		}
 
 		if (status != yajl_gen_status_ok) {
-			fprintf(stderr, "yaml-json: failed to emit value\n");
+			fprintf(stderr, "yaml-json: failed to emit value: %s\n", gen_status_str[status]);
 			exit(1);
 		}
 

@@ -72,7 +72,7 @@ is_num(char *s, size_t len)
 }
 
 static yajl_gen_status
-gen_scalar(yajl_gen gen, yaml_event_t *event)
+gen_scalar(yajl_gen gen, yaml_parser_t *parser, yaml_event_t *event)
 {
 	unsigned char *val;
 	size_t len;
@@ -80,7 +80,7 @@ gen_scalar(yajl_gen gen, yaml_event_t *event)
 	val = event->data.scalar.value;
 	len = event->data.scalar.length;
 
-	if (event->data.scalar.quoted_implicit)
+	if (event->data.scalar.quoted_implicit || parser->state == YAML_PARSE_BLOCK_MAPPING_VALUE_STATE)
 		return yajl_gen_string(gen, val, len);
 	else if (!strncmp("null", (char *)val, len))
 		return yajl_gen_null(gen);
@@ -132,6 +132,7 @@ main(int argc, char **argv)
 	        NULL);
 	if (!ok) {
 		fprintf(stderr, "yaml-json: failed to configure generator\n");
+		yaml_parser_delete(&parser);
 		exit(1);
 	}
 
@@ -158,7 +159,7 @@ main(int argc, char **argv)
 			goto done;
 
 		case YAML_SCALAR_EVENT:
-			status = gen_scalar(gen, &event);
+			status = gen_scalar(gen, &parser, &event);
 			break;
 
 		case YAML_SEQUENCE_START_EVENT:

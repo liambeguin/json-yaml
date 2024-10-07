@@ -131,6 +131,8 @@ main(int argc, char **argv)
 		if (!yaml_parser_parse(&parser, &event)) {
 			fprintf(stderr, "yaml-json: failed to parse "
 			    "event\n");
+			yaml_event_delete(&event);
+			yaml_parser_delete(&parser);
 			exit(1);
 		}
 
@@ -185,5 +187,6 @@ main(int argc, char **argv)
 	}
 
 done:
+	yaml_parser_delete(&parser);
 	return 0;
 }

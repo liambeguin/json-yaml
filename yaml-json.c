@@ -104,16 +104,14 @@ main(int argc, char **argv)
 	}
 
 	if (!yaml_parser_initialize(&parser)) {
-		fprintf(stderr, "yaml-json: failed to initialize "
-		    "parser\n");
+		fprintf(stderr, "yaml-json: failed to initialize parser\n");
 		exit(1);
 	}
 
 	yaml_parser_set_input_file(&parser, file);
 
 	if (!(gen = yajl_gen_alloc(NULL))) {
-		fprintf(stderr, "yaml-json: failed to initialize "
-		    "generator\n");
+		fprintf(stderr, "yaml-json: failed to initialize generator\n");
 		exit(1);
 	}
 
@@ -122,8 +120,7 @@ main(int argc, char **argv)
 	     yajl_gen_config(gen, yajl_gen_print_callback, print_cb,
 	        NULL);
 	if (!ok) {
-		fprintf(stderr, "yaml-json: failed to configure "
-		    "generator\n");
+		fprintf(stderr, "yaml-json: failed to configure generator\n");
 		exit(1);
 	}
 
@@ -167,19 +164,16 @@ main(int argc, char **argv)
 			break;
 
 		case YAML_ALIAS_EVENT:
-			fprintf(stderr, "yaml-json: aliases are not "
-			    "yet supported\n");
+			fprintf(stderr, "yaml-json: aliases are not yet supported\n");
 			exit(1);
 
 		default:
-			fprintf(stderr, "yaml-json: unexpected event "
-			    "type: %d\n", (int)event.type);
+			fprintf(stderr, "yaml-json: unexpected event type: %d\n", (int)event.type);
 			exit(1);
 		}
 
 		if (status != yajl_gen_status_ok) {
-			fprintf(stderr, "yaml-json: failed to emit "
-			    "value\n");
+			fprintf(stderr, "yaml-json: failed to emit value\n");
 			exit(1);
 		}
 

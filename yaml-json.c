@@ -126,8 +126,11 @@ main(int argc, char **argv)
 
 	while (1) {
 		if (!yaml_parser_parse(&parser, &event)) {
-			fprintf(stderr, "yaml-json: failed to parse "
-			    "event\n");
+			puts("");
+			fprintf(stderr, "yaml-json: parse error at %lu:%lu: %s\n",
+					(unsigned long)parser.problem_mark.line + 1,
+					(unsigned long)parser.problem_mark.column + 1,
+					parser.problem);
 			yaml_event_delete(&event);
 			yaml_parser_delete(&parser);
 			exit(1);
